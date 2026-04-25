@@ -435,7 +435,23 @@ graph LR
 
 ---
 
-## 12. Summary
+## 12. Simulation Results ✅
+
+The pipeline was simulated using **Icarus Verilog** and waveforms were viewed in **GTKWave**. The following waveform shows all 5 stages operating correctly with data forwarding active:
+
+![Pipeline Simulation Waveform — All 5 Stages Working](doc/Images_Ref/5_Stage_PipeLine_Understand.png)
+
+**Key observations from the waveform:**
+- **Fetch Stage** — Instructions are fetched sequentially from `0x00` to `0x14`, with `InstrD` updating every cycle
+- **Decode Stage** — Control signals (`ALUSrcE`, `RegWriteE`, `MemWriteE`) are correctly generated per instruction type
+- **Execute Stage** — ALU produces correct results (e.g., `ALUResultM = 0x00000005` for `addi x5, x0, 5`)
+- **Memory Stage** — Load word correctly reads `0x00000020` from `Data_Memory[0]`
+- **Write Back Stage** — `ResultW` correctly propagates computed/loaded values back to the register file
+- **Data Forwarding** — No stalls observed for register-register dependencies; forwarding muxes resolve RAW hazards
+
+---
+
+## 13. Summary
 
 This RISC-V core is a **well-structured educational 5-stage pipeline** that correctly implements:
 - The fundamental pipeline architecture with proper pipeline registers
