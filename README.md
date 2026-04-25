@@ -1,4 +1,4 @@
-# RISC-V 5-Stage Pipelined Processor — Front-End Engineering Report
+# RISC-V 5-Stage Pipelined Processor 
 
 > **Architecture:** RV32I (subset) | **Pipeline:** 5-stage in-order | **Data Width:** 32-bit | **HDL:** Verilog | **Simulation:** Icarus Verilog + GTKWave
 
@@ -435,7 +435,7 @@ graph LR
 
 ---
 
-## 12. Simulation Results ✅
+## 12. Simulation Results 
 
 The pipeline was simulated using **Icarus Verilog** and waveforms were viewed in **GTKWave**. The following waveform shows all 5 stages operating correctly with data forwarding active:
 
