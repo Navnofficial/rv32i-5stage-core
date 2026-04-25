@@ -1,0 +1,92 @@
+[*]
+[*] GTKWave Analyzer v3.3.104 (w)1999-2020 BSI
+[*] Fri Apr 24 09:06:21 2026
+[*]
+[dumpfile] "/mnt/d/VLSI/RISC V/RISCV_Single_Cycle/src/Dump.vcd"
+[dumpfile_mtime] "Fri Apr 24 08:54:11 2026"
+[dumpfile_size] 16317
+[savefile] "/mnt/d/VLSI/RISC V/RISCV_Single_Cycle/src/Pipeline.gtkw"
+[timestart] 0
+[size] 1908 999
+[pos] 1391 -402
+*-2.323130 3 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[treeopen] tb.
+[treeopen] tb.uut.
+[sst_width] 214
+[signals_width] 198
+[sst_expanded] 1
+[sst_vpaned_height] 292
+@800200
+-Global Input
+@28
+tb.clk
+tb.rst
+@1000200
+-Global Input
+@800200
+-Fetch Cycle
+@28
+tb.uut.PCSrcE
+@22
+tb.uut.PCTargetE[31:0]
+tb.uut.InstrD[31:0]
+tb.uut.PCPlus4D[31:0]
+tb.uut.PCD[31:0]
+@1000200
+-Fetch Cycle
+@800200
+-Decode Cycle
+@22
+tb.uut.PCE[31:0]
+tb.uut.PCPlus4E[31:0]
+tb.uut.RD_E[4:0]
+@28
+tb.uut.ALUControlE[2:0]
+tb.uut.ALUSrcE
+tb.uut.BranchE
+tb.uut.MemWriteE
+tb.uut.RegWriteE
+@29
+tb.uut.ResultSrcE
+@22
+tb.uut.RD1_E[31:0]
+tb.uut.RD2_E[31:0]
+tb.uut.Imm_Ext_E[31:0]
+@1000200
+-Decode Cycle
+@800200
+-Execute Cycle
+@22
+tb.uut.PCPlus4M[31:0]
+tb.uut.RD_M[4:0]
+@28
+tb.uut.MemWriteM
+tb.uut.RegWriteM
+tb.uut.ResultSrcM
+@22
+tb.uut.WriteDataM[31:0]
+tb.uut.ALUResultM[31:0]
+@1000200
+-Execute Cycle
+@800200
+-Memory Cycle
+@22
+tb.uut.PCPlus4W[31:0]
+@28
+tb.uut.ResultSrcW
+@22
+tb.uut.ALUResultW[31:0]
+tb.uut.ReadDataW[31:0]
+@1000200
+-Memory Cycle
+@800200
+-Register Write Back
+@28
+tb.uut.RegWriteW
+@22
+tb.uut.RDW[4:0]
+tb.uut.ResultW[31:0]
+@1000200
+-Register Write Back
+[pattern_trace] 1
+[pattern_trace] 0
