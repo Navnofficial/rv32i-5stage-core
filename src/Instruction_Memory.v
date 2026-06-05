@@ -1,12 +1,13 @@
-module Instruction_Memory(rst,A,RD);
+module Instruction_Memory(rst,A,RD); //Instruction Memory
 
   input rst;
-  input [31:0]A;
-  output [31:0]RD;
+  input [31:0]A;   //Address
+  output [31:0]RD; //Instruction Read
 
   reg [31:0] mem [1023:0];
   
-  assign RD = (rst == 1'b0) ? {32{1'b0}} : mem[A[31:2]];
+  assign RD = (rst == 1'b0) ? {32{1'b0}} : mem[A[31:2]]; //why 31:2 ?
+  // because last two bits are always zero for instruction memory 
 
   initial begin
     $readmemh("memfile.hex",mem);

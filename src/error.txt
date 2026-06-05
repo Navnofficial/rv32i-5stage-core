@@ -1,0 +1,54 @@
+navnoff@NAVN:/mnt/d/VLSI/RISC V/RISCV_Single_Cycle/src$ iverilog -g2012 -o dump.vvp PC.v PC_Adder.v Mux.v Instruction_Memory.v Register_File.v ALU.v ALU_Decoder.v Main_Decoder.v Control_Unit_Top.v Sign_Extend.v Branch_Comparator.v Data_Memory.v Fetch_Cycle.v Decode_Cycle.v Execute_Cycle.v Memory_Cycle.v Write_Back_Cycle.v Hazard_unit.v Pipeline_Top.v Pipeline_Top_tb.v && vvp dump.vvp
+WARNING: Instruction_Memory.v:12: $readmemh: Standard inconsistency, following 1364-2005.
+VCD info: dumpfile Pipeline_dump.vcd opened for output.
+=== Register File Dump ===
+x0  (zero) = 0 (0x00000000)
+x1         = 5 (0x00000005)
+x2         = 3 (0x00000003)
+x3         = 8 (0x00000008)
+x4         = 2 (0x00000002)
+x5         = 61440 (0x0000f000)
+x6         = 16777236 (0x01000014)
+x7         = 1 (0x00000001)
+x8         = 0 (0x00000000)
+x9         = 6 (0x00000006)
+x10        = 7 (0x00000007)
+x11        = 1 (0x00000001)
+x12        = 40 (0x00000028)
+x13        = 0 (0x00000000)
+x14        = 0 (0x00000000)
+x15        = 64 (0x00000040)
+x17        = 1 (0x00000001)
+x20        = 0 (0x00000000)
+x21        = 0 (0x00000000)
+x22        = 0 (0x00000000)
+x23        = 0 (0x00000000)
+x25        = 0 (0x00000000)
+x26        = 0 (0x00000000)
+x27        = 0 (0x00000000)
+x28        = 0 (0x00000000)
+x29        = 0 (0x00000000)
+x30        = 0 (0x00000000)
+
+=== PASS/FAIL Checks ===
+PASS: ADD  x3=8
+FAIL: SB/ADDI x4=2 (expected 171)
+PASS: SLT  x7=1 (3<5)
+PASS: SLT  x8=0 (5<3 false)
+PASS: XOR  x9=6
+PASS: OR   x10=7
+PASS: AND  x11=1
+PASS: SLL  x12=40
+PASS: LUI  x5=0x0000F000
+FAIL: JAL  x20=0 (expected 1)
+FAIL: BEQ  x21=0 (expected 1)
+FAIL: BNE  x22=0 (expected 1)
+FAIL: BLT  x23=0 (expected 1)
+FAIL: LW   x27=0 (expected 8)
+FAIL: LB   x25=0 (expected 8)
+FAIL: LBU  x28=0x00000000 (expected 0xAB)
+FAIL: LW(stall) x29=0 (expected 8)
+FAIL: ADD(post-stall) x30=0 (expected 16)
+
+Simulation complete.
+navnoff@NAVN:/mnt/d/VLSI/RISC V/RISCV_Single_Cycle/src$

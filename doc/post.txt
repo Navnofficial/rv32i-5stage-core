@@ -1,0 +1,83 @@
+33 PASS. 0 FAIL.
+
+The first version of this pipeline supported 9 instructions. It simulated. It passed my tests. I had no idea if it was actually correct.
+
+So I rebuilt the instruction set from scratch — and then I built the tests to prove it.
+
+**What got added:**
+
+The original branch logic was one line:
+`PCSrcE = Zero & Branch`
+
+funct3 never checked. BNE, BLT, BGE, BLTU, BGEU were all silently wrong — executing but producing incorrect control flow. Added a dedicated Branch Comparator module. Every branch type now evaluates its own condition.
+
+JAL and JALR were completely missing. No function calls possible. Expanded ResultSrc to 2 bits, added jump control path, wrote return address correctly to link register.
+
+Load-use stall — documented as broken in the previous post — is now implemented. Hazard unit detects when a load is in EX and the next instruction depends on it. Freezes PC and decode for exactly one cycle. Inserts a bubble into execute. Pipeline resumes with correct data.
+
+**Then came the testing.**
+
+Built a test program — 49 instructions assembled with the RISC-V GCC cross-compiler. Every instruction writes to its own destination register. Nothing gets overwritten. Testbench checks every register value at simulation end. PASS or FAIL printed to terminal. No interpretation needed.
+
+**What 49 instructions covers:**
+
+R-type: ADD, SUB, AND, OR, XOR, SLT, SLTU, SLL, SRL, SRA
+I-type: ADDI, ANDI, ORI, XORI, SLTI, SLTIU, SLLI, SRLI, SRAI
+Upper immediate: LUI, AUIPC
+Memory: LW, LB, LBU, LH, LHU, SW, SB, SH
+Branches: BEQ, BNE, BLT, BGE, BLTU, BGEU — each with values that genuinely trigger the condition
+Jumps: JAL, JALR — subroutine call and return
+Load-use hazard: LW immediately followed by dependent ADD — no NOP in between
+
+**What the waveform shows:**
+
+`lw x31, 0(x0)` followed immediately by `add x30, x31, x24`
+
+StallF and StallD pulse HIGH for exactly one cycle. PC freezes — same address two cycles in a row. Bubble inserted into execute. lw completes memory read. ReadDataW arrives as 0x8. add executes with correct x31. ALUResultM shows 0x10 — 16 in decimal. ResultW writes 16 to x30.
+
+Load-use stall worked. The waveform proves it. The testbench confirms it.
+
+**The thing that stayed with me:**
+
+My previous BLT test was `blt x2, x2` — same register on both sides. Branch never taken. Execution fell through, set the result register anyway, testbench printed PASS.
+
+BLT was never actually exercised.
+
+I only found this when I looked at the disassembly. The instruction was there. The test was wrong. It passed anyway.
+
+That's what untrusted testing looks like. You get confidence you didn't earn.
+
+Writing a test that can actually fail is harder than writing the RTL.
+
+---
+
+**Stack:**
+ISA: RV32I (~95% coverage) · 37 base integer instructions
+Assembler: riscv64-unknown-elf-gcc · -march=rv32i · -mabi=ilp32
+RTL: Verilog · Simulation: Icarus Verilog · Debug: GTKWave
+33 automated checks — zero failures
+
+Next: RISC-V architectural test suite. Official compliance vectors. The difference between "my tests pass" and "the spec passes."
+
+GitHub: [link]
+
+---
+
+*Verification isn't checking that it works.*
+*It's writing a test that would catch it if it didn't.*
+
+---
+
+*If you're building something where the hardest part turned out to be proving it's correct — this one's for you.*
+
+---
+
+`#RISCV` `#Verilog` `#RTLDesign` `#HardwareVerification` `#CPUDesign`
+
+---
+
+**Image placement:**
+- **Image 1 first** — the PASS/FAIL terminal output. Lead with the result. 33 PASS 0 FAIL is the hook before anyone reads a word.
+- **Image 2 second** — the annotated waveform. Every label you added tells the story — lw x31, add x30, StallF & StallD = 1, Load-use Stall worked, Branch Flush, NOP flushed, Add Complete → 16. This image alone explains the entire hazard unit behavior.
+
+Two images. Terminal proof first. Waveform explanation second. That's the right order.
