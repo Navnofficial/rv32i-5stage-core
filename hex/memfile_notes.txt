@@ -1,0 +1,76 @@
+  RV32I Test Program — Full Disassembly
+  ======================================
+  Address  Hex       Assembly              Expected Effect
+  -------  --------  --------------------  ----------------------------------------
+  00       00500093  addi x1, x0, 5        x1 = 5
+  04       00300113  addi x2, x0, 3        x2 = 3
+  08       002081B3  add  x3, x1, x2       x3 = 8  (PASS: ADD)
+  0C       40208233  sub  x4, x1, x2       x4 = 2
+  10       0000F2B7  lui  x5, 0xF          x5 = 0x0000F000  (PASS: LUI)
+  14       01000317  auipc x6, 0x10        x6 = PC(0x14)+0x10000 = 0x10014
+  18       001123B3  slt  x7, x2, x1       x7 = 1  (3<5=true) (PASS: SLT)
+  1C       0020A433  slt  x8, x1, x2       x8 = 0  (5<3=false)(PASS: SLT false)
+  20       0020C4B3  xor  x9, x1, x2       x9 = 6  (PASS: XOR)
+  24       0020E533  or  x10, x1, x2       x10= 7  (PASS: OR)
+  28       0020F5B3  and x11, x1, x2       x11= 1  (PASS: AND)
+  2C       00209633  sll x12, x1, x2       x12= 40 (PASS: SLL, 5<<3)
+  30       002056B3  srl x13, x12, x2      x13= 5
+  34       40205733  sra x14, x12, x2      x14= 5
+  38       0020B8B3  sltu x17, x1, x2      x17= 0 (5<3 unsigned false)
+
+  -- Store test data for loads --
+  3C       00302023  sw  x3, 0(x0)         mem[0] = 8
+  40       0AB00213  addi x4, x0, 0xAB     x4 = 171
+  44       00400223  sb  x4, 4(x0)         mem[4] = 0xAB (byte)
+
+  -- JAL test: jump forward 3 instructions (12 bytes), land at instr 0x54 --
+  -- x15 = PC+4 = 0x4C (return addr stored) --
+  48       00C007EF  jal x15, +12          x15 = 0x4C, PC = 0x54
+
+  -- These 2 instructions should be SKIPPED (NOPs) --
+  4C       00000013  nop
+  50       00000013  nop
+
+  -- JAL lands here at 0x54 --
+  54       00100A13  addi x20, x0, 1       x20 = 1  (PASS: JAL subroutine reached)
+
+  -- BEQ: x1==? (need equal pair) use x1 vs x1 --
+  58       00108663  beq  x1, x1, +12      taken → skip 2 NOPs, land at 0x68
+  5C       00000013  nop (skipped)
+  60       00000013  nop (skipped)
+  64       00000013  nop (skipped, since offset=12 means +3 instrs from 0x58 → 0x64)
+
+  -- Wait, BEQ at 0x58 with offset +12 → PC = 0x58+12 = 0x64 --
+  -- So 0x5C and 0x60 are skipped, 0x64 is landed on --
+  64       00100A93  addi x21, x0, 1       x21 = 1  (PASS: BEQ)
+
+  -- BNE: x1 != x2 (5 != 3) → taken --
+  68       00209663  bne  x1, x2, +12      taken → skip to 0x78
+  6C       00000013  nop (skipped)
+  70       00000013  nop (skipped)
+  74       00000013  nop (boundary)
+
+  -- BNE lands at 0x74? 0x68+12=0x74 --
+  74       00100B13  addi x22, x0, 1       x22 = 1  (PASS: BNE)
+
+  -- BLT: x2 < x1 (3 < 5) → taken --
+  78       00214663  blt  x2, x1, +12      taken → skip to 0x88
+  7C       00000013  nop
+  80       00000013  nop
+  84       00000013  nop (boundary)
+
+  -- BLT lands at 0x84? 0x78+12=0x84 --
+  84       00100B93  addi x23, x0, 1       x23 = 1  (PASS: BLT)
+
+  -- Load tests --
+  88       00002D83  lw  x27, 0(x0)        x27 = 8  (PASS: LW)
+  8C       00000C83  lb  x25, 0(x0)        x25 = 8  (PASS: LB)
+  90       00404E03  lbu x28, 4(x0)        x28 = 0xAB (PASS: LBU)
+
+  -- Load-use hazard test --
+  94       00002E83  lw  x29, 0(x0)        x29 = 8
+  98       01DE8F33  add x30, x29, x29     x30 = 16  (PASS: post-stall ADD)
+
+  -- Infinite loop --
+  9C       0000006F  jal x0, 0             infinite loop (halt)
+
